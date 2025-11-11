@@ -10,6 +10,7 @@ use App\Http\Controllers\ObraPlanoController;
 use App\Http\Controllers\ObraContratoController;
 use App\Http\Controllers\ObraFotoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\NewRegisterController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,19 +24,34 @@ use App\Http\Controllers\DashboardController;
 
 Route::redirect('/', '/login');  
 
+// Route::get('/new-register', function () {
+//     return view('auth.new-register');
+// })->name('new-register');
+// routes/web.php
+Route::get('/new-register', [NewRegisterController::class, 'showForm'])->name('new-register');
+Route::post('/new-register', [NewRegisterController::class, 'store'])->name('new-register.store');
+
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])
+
+
+
+
+// Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
-Route::middleware(['auth'])->group(function () {
     Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
     Route::get('/clientes/create', [ClienteController::class, 'create'])->name('clientes.create');
     Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
 
-    Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+    // Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+    Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
+    ->middleware('can:view,cliente')
+    ->name('clientes.show');
+
 
     Route::get('/clientes/{cliente}/edit', [ClienteController::class, 'edit'])->name('clientes.edit');
     Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
@@ -47,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','verified', 'profile.complete'])->group(function () {
     
     // Dashboard de obras
     Route::get('/works/dashboard', [ObraController::class, 'dashboard'])->name('works.dashboard');
