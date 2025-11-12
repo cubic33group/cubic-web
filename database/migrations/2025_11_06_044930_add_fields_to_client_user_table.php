@@ -9,18 +9,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('cliente_user', function (Blueprint $table) {
-            // Agregar columnas si no existen
-            if (!Schema::hasColumn('cliente_user', 'status')) {
+        // Primero agregar las columnas
+        if (!Schema::hasColumn('cliente_user', 'status')) {
+            Schema::table('cliente_user', function (Blueprint $table) {
                 $table->string('status')->default('active')->after('user_id');
-            }
+            });
+        }
 
-            if (!Schema::hasColumn('cliente_user', 'role')) {
+        if (!Schema::hasColumn('cliente_user', 'role')) {
+            Schema::table('cliente_user', function (Blueprint $table) {
                 $table->string('role')->nullable()->after('status');
-            }
-        });
+            });
+        }
 
-        // Agregar índices después de que las columnas existan
+        // Luego agregar los índices en una operación separada
         Schema::table('cliente_user', function (Blueprint $table) {
             // Agregar índice único para cliente_id y user_id (solo si no existe)
             if (!$this->hasIndex('cliente_user', 'cliente_user_unique')) {
