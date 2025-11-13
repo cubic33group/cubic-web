@@ -11,6 +11,7 @@ use App\Http\Controllers\ObraContratoController;
 use App\Http\Controllers\ObraFotoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\NewRegisterController;
+use App\Http\Controllers\ObraPersonaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -124,6 +125,15 @@ Route::middleware(['auth'])->group(function () {
     // Cámaras
     Route::post('/works/{obra}/camaras', [ObraCamaraController::class, 'store'])->name('obras.camaras.store');
     Route::delete('/works/{obra}/camaras/{camara}', [ObraCamaraController::class, 'destroy'])->name('obras.camaras.destroy');
+
+     Route::post('/works/{obra}/personas', [ObraPersonaController::class, 'store'])
+        ->name('obras.personas.store');
+    
+        Route::put('/obras/{obra}/personas/{persona}', [ObraPersonaController::class, 'update'])
+        ->name('obras.personas.update');
+
+    Route::delete('/obras/{obra}/personas/{persona}', [ObraPersonaController::class, 'destroy'])
+        ->name('obras.personas.destroy');
     // ==========================================
 });
 
